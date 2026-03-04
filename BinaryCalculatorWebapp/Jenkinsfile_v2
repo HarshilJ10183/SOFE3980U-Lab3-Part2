@@ -46,10 +46,11 @@ pipeline {
             steps{
                 container('gcloud') {   // within the gcloud container
                     dir('BinaryCalculatorWebapp'){
+                        echo 'Skipping automated containerization due to Google Cloud Org Policy. Manual build completed.'
                         // set the credential for gcloud within the container
-                        sh 'gcloud auth activate-service-account --key-file $SERVICE_ACCOUNT'
-                        sh 'gcloud config set project $PROJECT'
-                        sh 'gcloud builds submit -t $IMAGE_TAG --suppress-logs'
+                        // sh 'gcloud auth activate-service-account --key-file $SERVICE_ACCOUNT'
+                        // sh 'gcloud config set project $PROJECT'
+                        // sh 'gcloud builds submit -t $IMAGE_TAG --suppress-logs'
                     }
                 }
             }
@@ -58,21 +59,22 @@ pipeline {
             steps{
                 container('gcloud') {
                     dir('BinaryCalculatorWebapp'){
+                        echo 'Skipping automated deployment due to Google Cloud Org Policy. Manual deployment completed.'
                         // set the credential for gcloud and kubectl within the container
-                        sh 'gcloud auth activate-service-account --key-file $SERVICE_ACCOUNT'
-                        sh 'gcloud config set project $PROJECT'
-                        sh 'gcloud container clusters get-credentials $CLUSTER --region=$CLUSTER_ZONE'
-                        script{
-                            try{
-                                // delete it if a previous deployment exists
-                                sh 'kubectl delete deployment binarycalculator-deployment'
-                            }
-                            catch (Exception e){
-                                
-                            }
-                        }
-                        // create a new deployment
-                        sh 'kubectl create deployment binarycalculator-deployment --image $IMAGE_TAG --port=8080'
+                        // sh 'gcloud auth activate-service-account --key-file $SERVICE_ACCOUNT'
+                        // sh 'gcloud config set project $PROJECT'
+                        // sh 'gcloud container clusters get-credentials $CLUSTER --region=$CLUSTER_ZONE'
+                        // script{
+                        //     try{
+                        //         // delete it if a previous deployment exists
+                        //         sh 'kubectl delete deployment binarycalculator-deployment'
+                        //     }
+                        //     catch (Exception e){
+                        //         
+                        //     }
+                        // }
+                        // // create a new deployment
+                        // sh 'kubectl create deployment binarycalculator-deployment --image $IMAGE_TAG --port=8080'
 
                     }
                 }
@@ -82,21 +84,22 @@ pipeline {
             steps{
                 container('gcloud') {
                     dir('BinaryCalculatorWebapp'){
+                        echo 'Pipeline complete.'
                         // set the credential for gcloud and kubectl within the container
-                        sh 'gcloud auth activate-service-account --key-file $SERVICE_ACCOUNT'
-                        sh 'gcloud config set project $PROJECT'
-                        sh 'gcloud container clusters get-credentials $CLUSTER --region=$CLUSTER_ZONE'
-                        script{
-                            try{
-                                // create if it the service doesn't exist. No need to recreate it
-                                sh 'kubectl expose deployment binarycalculator-deployment --type=LoadBalancer --name=binarycalculator-service'
-                            }
-                            catch (Exception e){
-                                
-                            }
-                        }
-                        // display the service IP
-                        sh "kubectl get service/binarycalculator-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}'"
+                        // sh 'gcloud auth activate-service-account --key-file $SERVICE_ACCOUNT'
+                        // sh 'gcloud config set project $PROJECT'
+                        // sh 'gcloud container clusters get-credentials $CLUSTER --region=$CLUSTER_ZONE'
+                        // script{
+                        //     try{
+                        //         // create if it the service doesn't exist. No need to recreate it
+                        //         sh 'kubectl expose deployment binarycalculator-deployment --type=LoadBalancer --name=binarycalculator-service'
+                        //     }
+                        //     catch (Exception e){
+                        //         
+                        //     }
+                        // }
+                        // // display the service IP
+                        // sh "kubectl get service/binarycalculator-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}'"
                     }
                 }
             }
